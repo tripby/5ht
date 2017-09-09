@@ -1,0 +1,91 @@
+# project: tripby
+# version: 34
+
+type Article implements Node {
+  author: User @relation(name: "ArticleAuthor")
+  categories: [Category!]! @relation(name: "ArticleOnCategory")
+  content: String!
+  createdAt: DateTime!
+  downvotes: Int! @defaultValue(value: 0)
+  id: ID! @isUnique
+  title: String!
+  updatedAt: DateTime!
+  upvotes: Int! @defaultValue(value: 0)
+}
+
+type Category implements Node {
+  articles: [Article!]! @relation(name: "ArticleOnCategory")
+  createdAt: DateTime!
+  id: ID! @isUnique
+  title: String!
+  updatedAt: DateTime!
+}
+
+type Drug implements Node {
+  createdAt: DateTime!
+  experiences: [Experience!]! @relation(name: "ExperienceDrugs")
+  id: ID! @isUnique
+  molecules: [File!]! @relation(name: "DrugOnFile")
+  name: String! @isUnique
+  rating: [Rating!]!
+  updatedAt: DateTime!
+}
+
+type Effect implements Node {
+  createdAt: DateTime!
+  description: String! @isUnique
+  id: ID! @isUnique
+  image: File @relation(name: "EffectOnFile")
+  title: String! @isUnique
+  updatedAt: DateTime!
+}
+
+type Experience implements Node {
+  author: User @relation(name: "ExperienceAuthor")
+  createdAt: DateTime!
+  downvotes: Int! @defaultValue(value: 0)
+  drugs: [Drug!]! @relation(name: "ExperienceDrugs")
+  id: ID! @isUnique
+  story: String!
+  tags: [Tag!]! @relation(name: "ExperienceTags")
+  title: String!
+  updatedAt: DateTime!
+  upvotes: [Int!]! @defaultValue(value: "[0]")
+}
+
+type File implements Node {
+  contentType: String!
+  createdAt: DateTime!
+  drug: Drug @relation(name: "DrugOnFile")
+  effect: Effect @relation(name: "EffectOnFile")
+  id: ID! @isUnique
+  name: String!
+  secret: String! @isUnique
+  size: Int!
+  updatedAt: DateTime!
+  url: String! @isUnique
+}
+
+enum Rating {
+  R1
+  R2
+  R3
+  R4
+  R5
+}
+
+type Tag implements Node {
+  createdAt: DateTime!
+  experiences: [Experience!]! @relation(name: "ExperienceTags")
+  id: ID! @isUnique
+  tag: String! @isUnique
+  updatedAt: DateTime!
+}
+
+type User implements Node {
+  articles: [Article!]! @relation(name: "ArticleAuthor")
+  createdAt: DateTime!
+  experiences: [Experience!]! @relation(name: "ExperienceAuthor")
+  id: ID! @isUnique
+  updatedAt: DateTime!
+}
