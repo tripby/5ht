@@ -1,5 +1,5 @@
 # project: tripby
-# version: 34
+# version: 69
 
 type Article implements Node {
   author: User @relation(name: "ArticleAuthor")
@@ -16,24 +16,57 @@ type Article implements Node {
 type Category implements Node {
   articles: [Article!]! @relation(name: "ArticleOnCategory")
   createdAt: DateTime!
+  drugs: [Drug!]! @relation(name: "DrugOnCategory")
   id: ID! @isUnique
   title: String!
   updatedAt: DateTime!
 }
 
-type Drug implements Node {
+type Combination implements Node {
   createdAt: DateTime!
-  experiences: [Experience!]! @relation(name: "ExperienceDrugs")
+  description: String
+  drugs: [Drug!]! @relation(name: "DrugCombinations")
   id: ID! @isUnique
+  synergy: Boolean
+  updatedAt: DateTime!
+}
+
+type Drug implements Node {
+  alerts: [String!]!
+  aliases: [String!]
+  analogues: [Drug!]! @relation(name: "DrugAnalogues")
+  class: Category @relation(name: "DrugOnCategory")
+  combinations: Combination @relation(name: "DrugCombinations")
+  createdAt: DateTime!
+  crossTolerances: [Drug!]! @relation(name: "DrugOnDrug")
+  effects: [Effect!]! @relation(name: "DrugEffects")
+  effectsExcerpt: String @isUnique
+  experiences: [Experience!]! @relation(name: "ExperienceDrugs")
+  health: String @isUnique
+  healthExcerpt: String @isUnique
+  id: ID! @isUnique
+  lawExcerpt: String @isUnique
   molecules: [File!]! @relation(name: "DrugOnFile")
   name: String! @isUnique
   rating: [Rating!]!
+  routes: [Route!]! @relation(name: "DrugOnRoute")
+  updatedAt: DateTime!
+}
+
+type Duration implements Node {
+  createdAt: DateTime!
+  id: ID! @isUnique
+  max: Float
+  min: Float
+  route: Route @relation(name: "RouteOnDuration")
+  timeframe: Timeframe!
   updatedAt: DateTime!
 }
 
 type Effect implements Node {
   createdAt: DateTime!
   description: String! @isUnique
+  drugs: [Drug!]! @relation(name: "DrugEffects")
   id: ID! @isUnique
   image: File @relation(name: "EffectOnFile")
   title: String! @isUnique
@@ -74,12 +107,41 @@ enum Rating {
   R5
 }
 
+type Route implements Node {
+  createdAt: DateTime!
+  drug: Drug @relation(name: "DrugOnRoute")
+  durations: [Duration!]! @relation(name: "RouteOnDuration")
+  id: ID! @isUnique
+  name: Routes!
+  updatedAt: DateTime!
+}
+
+enum Routes {
+  Oral
+  Sublingual
+  Recetal
+  Pulmonary
+  Transdermal
+  Intravenous
+  Subcutaneous
+  Intramuscular
+}
+
 type Tag implements Node {
   createdAt: DateTime!
   experiences: [Experience!]! @relation(name: "ExperienceTags")
   id: ID! @isUnique
   tag: String! @isUnique
   updatedAt: DateTime!
+}
+
+enum Timeframe {
+  ComeUp
+  Onset
+  Peak
+  ComeDown
+  Total
+  Hangover
 }
 
 type User implements Node {
